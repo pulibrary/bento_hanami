@@ -1,0 +1,36 @@
+version: 2.1
+orbs:
+  ruby: circleci/ruby@2.1.0
+jobs:
+  build:
+    docker:
+      - image: cimg/ruby:3.2
+    steps:
+      - checkout
+      - ruby/install-deps
+  checking:
+    docker: 
+      - image: cimg/ruby:3.2
+    steps:
+      - checkout
+      - ruby/install-deps
+      - ruby/rubocop-check:
+          format: progress
+          label: Inspecting with Rubocop
+  test:
+    docker: 
+      - image: cimg/ruby:3.2
+    parallelism: 3
+    steps:
+      - checkout
+      - ruby/install-deps
+      - ruby/rspec-test:
+          include: spec/**/*_spec.rb
+workflows:
+  build_and_test:
+    jobs:
+      - build
+      - checking
+      - test:
+          requires:
+            - build

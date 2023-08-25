@@ -14,6 +14,7 @@ gem 'rubocop-rake', require: false
 
 group :development, :test do
   gem "dotenv"
+  gem "rspec_junit_formatter", require: false
 end
 
 group :cli, :development do

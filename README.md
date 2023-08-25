@@ -1,4 +1,7 @@
 # BentoHanami
+
+[![CircleCI](https://circleci.com/gh/pulibrary/bento_hanami.svg?style=svg)](https://circleci.com/gh/pulibrary/bento_hanami)
+
 Requires:
 - Ruby 3.2
 

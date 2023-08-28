@@ -12,50 +12,33 @@ module BentoHanami
 
         def handle(request, response)
           halt 422, { errors: request.params.errors }.to_json unless request.params.valid?
-
+          service = 'dpul'
           query_terms = request.params[:query]
 
-          dpul_response = dpul_response(query_terms:)
+          service_response = service_response(query_terms:, service:)
 
           response.format = :json
-          response.body = our_response(dpul_response:, query_terms:)
+          response.body = our_response(service_response:, query_terms:, service:)
         end
 
-        def our_response(dpul_response:, query_terms:)
-          {
-            number: dpul_response[:meta][:pages][:total_count],
-            more: more_link(query_terms:),
-            records: parsed_records(documents: dpul_response[:data])
-          }.to_json
+        def documents(service_response:)
+          service_response[:data]
         end
 
-        def dpul_response(query_terms:)
-          uri = URI::HTTPS.build(host: 'dpul.princeton.edu', path: '/catalog.json',
+        def service_response(query_terms:, service:)
+          uri = URI::HTTPS.build(host: "#{service}.princeton.edu", path: '/catalog.json',
                                  query: "q=#{query_terms}&search_field=all_fields&per_page=3")
           response = Net::HTTP.get(uri)
           JSON.parse(response, symbolize_names: true)
         end
 
-        def more_link(query_terms:)
-          URI::HTTPS.build(host: 'dpul.princeton.edu', path: '/catalog',
+        def more_link(query_terms:, service:)
+          URI::HTTPS.build(host: "#{service}.princeton.edu", path: '/catalog',
                            query: "q=#{query_terms}&search_field=all_fields")
         end
 
-        def parsed_records(documents:)
-          documents.map do |document|
-            doc_keys = [:title, :creator, :publisher, :id, :type, :description, :url, :other_fields]
-            parsed_record(document:, doc_keys:)
-          end
-        end
-
-        def parsed_record(document:, doc_keys:)
-          doc_hash = {}
-          # The method name must match the key name, and must take the keyword argument `document:`
-          doc_keys.each do |key|
-            val = send(key, document:)
-            doc_hash[key] = val if val
-          end
-          doc_hash
+        def number(service_response:)
+          service_response[:meta][:pages][:total_count]
         end
 
         def title(document:)

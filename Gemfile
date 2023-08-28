@@ -11,6 +11,7 @@ gem "puma"
 gem "rake"
 gem 'rubocop', require: false
 gem 'rubocop-rake', require: false
+gem 'summon'
 
 group :development, :test do
   gem "dotenv"

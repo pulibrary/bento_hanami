@@ -192,6 +192,8 @@ GEM
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
     shellany (0.0.1)
+    summon (2.0.5)
+      json
     thor (1.2.2)
     unicode-display_width (2.4.2)
     zeitwerk (2.6.11)
@@ -218,6 +220,7 @@ DEPENDENCIES
   rspec_junit_formatter
   rubocop
   rubocop-rake
+  summon
 
 BUNDLED WITH
    2.4.19

@@ -6,5 +6,6 @@ module BentoHanami
     get "/search/catalog", to: "search.catalog"
     get "/search/dpul", to: "search.dpul"
     get "/search/dpul", to: "search.dpul"
+    get "/search/findingaids", to: "search.findingaids"
   end
 end

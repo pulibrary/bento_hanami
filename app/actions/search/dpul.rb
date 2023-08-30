@@ -54,6 +54,7 @@ module BentoHanami
           document.dig(:attributes, :readonly_publisher_ssim, :attributes, :value)
         end
 
+        # Same for Blacklight apps
         def id(document:)
           document[:id]
         end

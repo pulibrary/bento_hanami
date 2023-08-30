@@ -5,13 +5,14 @@ require 'net/http'
 module BentoHanami
   module Actions
     module Search
-      class Catalog < BentoHanami::Action
+      # aka pulfa or pulfalight
+      class Findingaids < BentoHanami::Action
         params do
           required(:query).filled(:string)
         end
 
         def handle(request, response)
-          service = 'catalog'
+          service = 'findingaids'
 
           response_by_service(request:, response:, service:)
         end
@@ -42,16 +43,18 @@ module BentoHanami
           document[:links][:self]
         end
 
+        # Use the collection name as the title?
         def title(document:)
-          document.dig(:attributes, :title)
+          document.dig(:attributes, :collection_ssm, :attributes, :value)
         end
 
         def creator(document:)
-          document.dig(:attributes, :author_display, :attributes, :value)&.first
+          document.dig(:attributes, :creator_ssm, :attributes, :value)
         end
 
+        # No sensible field to map to this currently
         def publisher(document:)
-          document.dig(:attributes, :pub_created_display, :attributes, :value)&.first
+          # tbd - nothing in the current json that seems relevant
         end
 
         # Same for Blacklight apps
@@ -61,28 +64,29 @@ module BentoHanami
         end
 
         def type(document:)
-          document.dig(:attributes, :format, :attributes, :value)&.first
+          document[:type]
         end
 
+        # This field may contain html
         def description(document:)
-          # tbd - nothing in the current json that seems relevant
+          document.dig(:attributes, :scopecontent_ssm, :attributes, :value)
         end
 
         def other_fields(document:)
-          doc_keys = [:call_number, :library]
+          doc_keys = [:repository, :extent, :access_restriction]
           parsed_record(document:, doc_keys:)
         end
 
-        def first_holding(document:)
-          document.dig(:attributes, :holdings_1display, :attributes, :value)&.first&.last
+        def repository(document:)
+          document.dig(:attributes, :repository_ssm, :attributes, :value)
         end
 
-        def call_number(document:)
-          first_holding(document:)&.dig(:call_number)
+        def extent(document:)
+          document.dig(:attributes, :extent_ssm, :attributes, :value)
         end
 
-        def library(document:)
-          first_holding(document:)&.dig(:library)
+        def access_restriction(document:)
+          document.dig(:attributes, :accessrestrict_ssm, :attributes, :value)
         end
       end
     end
